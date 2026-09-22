@@ -1,9 +1,14 @@
 import { StyleSheet, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { store } from './src/store'
+import { Expenses } from './src/screens/Expenses'
 
 export function MainScreen() {
-  return <View style={styles.container}></View>
+  return (
+    <View style={styles.container}>
+      <Expenses />
+    </View>
+  )
 }
 
 export default function App() {

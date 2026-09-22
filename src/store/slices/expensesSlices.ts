@@ -1,7 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { supabase } from '../../lib/supabase'
 
-type Category = 'transporte' | 'comida' | 'servicios' | 'alquiler'
+type Category =
+  | 'alimentacion'
+  | 'transporte'
+  | 'entretenimiento'
+  | 'salud'
+  | 'educacion'
+  | 'otro'
 
 export interface Expense {
   id: string
