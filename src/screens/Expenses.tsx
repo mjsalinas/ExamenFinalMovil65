@@ -55,7 +55,7 @@ export default function ExpensesScreen() {
       return false;
     }
 
-    return true;
+     return true; 
   };
 
   const handleAddExpense = async () => {
@@ -191,12 +191,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 999,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: '#767a81',
     marginRight: 8,
     marginBottom: 8,
   },
   selectedCategory: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#3463ca',
   },
   categoryText: {
     color: '#374151',
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   saveButtonText: {
-    color: '#fff',
+    color: '#964848',
     fontWeight: '700',
     fontSize: 16,
   },
