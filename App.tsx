@@ -1,18 +1,7 @@
 import { useEffect, useReducer } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Provider } from 'react-redux';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Alert,
-} from 'react-native';
-
+import { KeyboardAvoidingView,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View,Alert,} from 'react-native';
 import { store } from './src/store';
 import { useAppDispatch, useAppSelector } from './src/store/hooks';
 import { addExpense, deleteExpense, fetchExpenses } from './src/store/slices/expensesSlice';
