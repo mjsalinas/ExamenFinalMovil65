@@ -1,4 +1,4 @@
-import 'react-native-url-polyfill/auto';
+import 'react-native-url-polyfill'
 import { Provider } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 import ExpensesScreen from './src/screens/Expenses';
