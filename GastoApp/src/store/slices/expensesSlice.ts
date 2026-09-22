@@ -18,13 +18,10 @@ const expensesSlice = createSlice({
 	name: 'expenses',
 	initialState,
 	reducers: {
-		addExpense: (
-			state,
-			action: PayloadAction<Omit<Expense, 'id'>>,
-		) => {
+		addExpense: (state, action: PayloadAction<Omit<Expense, 'id'>>) => {
 			state.items.unshift({
 				...action.payload,
-				id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+				id: Date.now().toString(),
 			});
 		},
 		removeExpense: (state, action: PayloadAction<string>) => {
