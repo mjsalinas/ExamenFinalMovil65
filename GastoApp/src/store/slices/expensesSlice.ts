@@ -10,7 +10,7 @@ export type Expense = {
 
 export const fetchExpenses = createAsyncThunk(
     'expenses/fetchExpenses', async () => {
-        const { data, error } = await supabase.from('expenses').select('*');
+        const { data, error } = await supabase.from('Expenses').select('*');
         if (error) throw new Error(error.message);
         return data as Expense[];
     });

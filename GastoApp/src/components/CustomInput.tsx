@@ -9,6 +9,7 @@ type CustomInputProps = {
   placeholder: string;
   OnChangeText: (text: string) => void;
   type?: 'text' | 'email' | 'password' | 'number';
+  
 };
 
 export default function CustomInput({
@@ -21,12 +22,12 @@ export default function CustomInput({
 
   const isPasswordField = type === 'password';
 
-  const icon: (typeof MaterialIcons)['name'] | undefined =
-    type === 'password'
-      ? 'lock'
-      : type === 'email'
-      ? 'alternate-email'
-      : undefined;
+  const icon: keyof typeof MaterialIcons.glyphMap | undefined =
+  type === 'password'
+    ? 'lock'
+    : type === 'email'
+    ? 'alternate-email'
+    : undefined;
 
   const keyboardType: KeyboardTypeOptions =
     type === 'email'
