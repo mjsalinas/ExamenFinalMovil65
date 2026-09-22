@@ -10,20 +10,7 @@ export interface Expense {
 
 export type NewExpense = Omit<Expense, 'id'>;
 
-interface ExpensesState {
-  items: Expense[];
-  loading: boolean;
-  error: string | null;
-}
-
-const initialState: ExpensesState = {
-  items: [],
-  loading: false,
-  error: null,
-};
-
-const getErrorMessage = (error: unknown) =>
-  error instanceof Error ? error.message : 'An unexpected error occurred';
+const initialState: Expense[] = [];
 
 export const fetchExpenses = createAsyncThunk<Expense[]>(
   'expenses/fetchExpenses',
@@ -77,41 +64,14 @@ const expensesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchExpenses.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(fetchExpenses.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items = action.payload;
-      })
-      .addCase(fetchExpenses.rejected, (state, action) => {
-        state.loading = false;
-        state.error = getErrorMessage(action.error);
-      })
-      .addCase(addExpense.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        return action.payload;
       })
       .addCase(addExpense.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items.unshift(action.payload);
-      })
-      .addCase(addExpense.rejected, (state, action) => {
-        state.loading = false;
-        state.error = getErrorMessage(action.error);
-      })
-      .addCase(deleteExpense.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.unshift(action.payload);
       })
       .addCase(deleteExpense.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items = state.items.filter((expense) => expense.id !== action.payload);
-      })
-      .addCase(deleteExpense.rejected, (state, action) => {
-        state.loading = false;
-        state.error = getErrorMessage(action.error);
+        return state.filter((expense) => expense.id !== action.payload);
       });
   },
 });
