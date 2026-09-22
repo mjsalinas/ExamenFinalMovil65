@@ -39,6 +39,12 @@ export default function ExpensesScreen() {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Calcular el total acumulado de todos los gastos
+  const totalExpenses = expenses.reduce(
+    (sum, item) => sum + (Number(item.amount) || 0),
+    0
+  );
+
   useEffect(() => {
     loadExpenses();
   }, []);
@@ -150,71 +156,80 @@ export default function ExpensesScreen() {
           renderItem={renderExpenseItem}
           contentContainerStyle={styles.listContent}
           ListHeaderComponent={
-            <View style={styles.formContainer}>
-              <Text style={styles.title}>Registro de Gastos</Text>
+            <View style={styles.headerContainer}>
+              {/* Formulario */}
+              <View style={styles.formContainer}>
+                <Text style={styles.title}>Registro de Gastos</Text>
 
-              {/* Descripcion */}
-              <Text style={styles.label}>Descripción</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Ej. Almuerzo de trabajo"
-                placeholderTextColor="#999"
-                value={description}
-                onChangeText={setDescription}
-              />
+                {/* Descripcion */}
+                <Text style={styles.label}>Descripción</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ej. Almuerzo de trabajo"
+                  placeholderTextColor="#999"
+                  value={description}
+                  onChangeText={setDescription}
+                />
 
-              {/* Monto */}
-              <Text style={styles.label}>Monto (Lps.)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Ej. 15.50"
-                placeholderTextColor="#999"
-                value={amount}
-                onChangeText={setAmount}
-                keyboardType="decimal-pad"
-              />
+                {/* Monto */}
+                <Text style={styles.label}>Monto (Lps.)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ej. 15.50"
+                  placeholderTextColor="#999"
+                  value={amount}
+                  onChangeText={setAmount}
+                  keyboardType="decimal-pad"
+                />
 
-              {/* Categorias Selector */}
-              <Text style={styles.label}>Categoría</Text>
-              <View style={styles.chipsContainer}>
-                {CATEGORIES.map((cat) => {
-                  const isSelected = selectedCategory === cat;
-                  return (
-                    <TouchableOpacity
-                      key={cat}
-                      style={[
-                        styles.chip,
-                        isSelected && styles.chipSelected,
-                      ]}
-                      onPress={() => setSelectedCategory(cat)}
-                      activeOpacity={0.8}
-                    >
-                      <Text
+                {/* Categorias Selector */}
+                <Text style={styles.label}>Categoría</Text>
+                <View style={styles.chipsContainer}>
+                  {CATEGORIES.map((cat) => {
+                    const isSelected = selectedCategory === cat;
+                    return (
+                      <TouchableOpacity
+                        key={cat}
                         style={[
-                          styles.chipText,
-                          isSelected && styles.chipTextSelected,
+                          styles.chip,
+                          isSelected && styles.chipSelected,
                         ]}
+                        onPress={() => setSelectedCategory(cat)}
+                        activeOpacity={0.8}
                       >
-                        {cat}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
+                        <Text
+                          style={[
+                            styles.chipText,
+                            isSelected && styles.chipTextSelected,
+                          ]}
+                        >
+                          {cat}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
+                {/* Boton Registrar Gasto */}
+                <TouchableOpacity
+                  style={[styles.submitButton, submitting && styles.buttonDisabled]}
+                  onPress={handleAddExpense}
+                  disabled={submitting}
+                  activeOpacity={0.8}
+                >
+                  {submitting ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.submitButtonText}>Registrar Gasto</Text>
+                  )}
+                </TouchableOpacity>
               </View>
 
-              {/* Boton Registrar Gasto */}
-              <TouchableOpacity
-                style={[styles.submitButton, submitting && styles.buttonDisabled]}
-                onPress={handleAddExpense}
-                disabled={submitting}
-                activeOpacity={0.8}
-              >
-                {submitting ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.submitButtonText}>Registrar Gasto</Text>
-                )}
-              </TouchableOpacity>
+              {/* Total Acumulado Card */}
+              <View style={styles.totalCard}>
+                <Text style={styles.totalLabel}>Total Acumulado</Text>
+                <Text style={styles.totalAmount}>Lps. {totalExpenses.toFixed(2)}</Text>
+              </View>
 
               <Text style={styles.sectionHeader}>Historial de Gastos</Text>
               {loading && (
@@ -244,11 +259,14 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32,
   },
+  headerContainer: {
+    marginBottom: 8,
+  },
   formContainer: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 20,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -322,11 +340,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  totalCard: {
+    backgroundColor: '#4F46E5',
+    borderRadius: 16,
+    padding: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  totalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#E0E7FF',
+  },
+  totalAmount: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
   sectionHeader: {
     fontSize: 18,
     fontWeight: '700',
     color: '#1F2937',
-    marginTop: 24,
     marginBottom: 8,
   },
   card: {
