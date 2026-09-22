@@ -69,7 +69,6 @@ export default function Expenses() {
     <View style={styles.container}>
       <Text style={styles.title}>GastoApp</Text>
 
-      {/* Formulario */}
       <View style={styles.form}>
         <TextInput
           style={styles.input}
@@ -113,12 +112,10 @@ export default function Expenses() {
         </TouchableOpacity>
       </View>
 
-      {/* Total Acumulado */}
       <View style={styles.totalCard}>
         <Text style={styles.totalText}>Total Acumulado: ${total.toFixed(2)}</Text>
       </View>
 
-      {/* Lista de Gastos */}
       {expenses.length === 0 ? (
         <Text style={styles.emptyText}>No hay gastos registrados</Text>
       ) : (
