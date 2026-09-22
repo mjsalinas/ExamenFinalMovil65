@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { supabase } from '../../lib/supabase';
 
+
 export interface Expense {
   id: string;
   description: string;
@@ -17,8 +18,7 @@ export const fetchExpenses = createAsyncThunk<Expense[]>(
   async () => {
     const { data, error } = await supabase
       .from('expenses')
-      .select('*')
-      .order('date', { ascending: false });
+      .select('id, description, amount, category');
 
     if (error) {
       throw new Error(error.message);
@@ -34,7 +34,7 @@ export const addExpense = createAsyncThunk<Expense, NewExpense>(
     const { data, error } = await supabase
       .from('expenses')
       .insert(expense)
-      .select()
+      .select('id, description, amount, category')
       .single();
 
     if (error) {

@@ -36,6 +36,21 @@ const initialFormState: FormState = {
   error: '',
 };
 
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const message = error.message;
+    if (typeof message === 'string' && message.length > 0) {
+      return message;
+    }
+  }
+
+  return fallback;
+};
+
 function formReducer(state: FormState, action: FormAction): FormState {
   switch (action.type) {
     case 'setDescription':
@@ -83,11 +98,14 @@ function ExpenseForm() {
       ).unwrap();
 
       formDispatch({ type: 'reset' });
+      Alert.alert('Gasto guardado', 'El gasto se registró correctamente.');
     } catch (submitError) {
+      const message = getErrorMessage(submitError, 'No se pudo guardar el gasto.');
       formDispatch({
         type: 'setError',
-        value: submitError instanceof Error ? submitError.message : 'No se pudo guardar el gasto.',
+        value: message,
       });
+      Alert.alert('No se pudo guardar', message);
     }
   };
 
@@ -97,7 +115,7 @@ function ExpenseForm() {
     } catch (deleteError) {
       Alert.alert(
         'No se pudo eliminar',
-        deleteError instanceof Error ? deleteError.message : 'Intenta nuevamente.',
+        getErrorMessage(deleteError, 'Intenta nuevamente.'),
       );
     }
   };
