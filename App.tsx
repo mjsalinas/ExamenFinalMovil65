@@ -1,25 +1,15 @@
 import "react-native-url-polyfill/auto";
+
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
 import { Provider } from "react-redux";
 import { store } from "./src/store";
+import Expenses from "./src/screens/Expenses";
 
 export default function App() {
   return (
     <Provider store={store}>
-      <View style={styles.container}>
-        <Text>GastoApp</Text>
-        <StatusBar style="auto" />
-      </View>
+      <Expenses />
+      <StatusBar style="auto" />
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
