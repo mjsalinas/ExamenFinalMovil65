@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
+  FlatList,
   Pressable,
   StyleSheet,
   Text,
@@ -8,8 +9,12 @@ import {
   View,
 } from 'react-native'
 import { JSX } from 'react/jsx-runtime'
-import { CategoryExpense, addExpense } from '../store/slices/expensesSlices'
-import { useAppDispatch } from '../store/hooks'
+import {
+  CategoryExpense,
+  addExpense,
+  fetchExpenses,
+} from '../store/slices/expensesSlices'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 
 const CategoryExpenses: { label: string; value: CategoryExpense }[] = [
   { label: 'Alimentacion', value: 'alimentacion' },
@@ -20,13 +25,38 @@ const CategoryExpenses: { label: string; value: CategoryExpense }[] = [
   { label: 'Otro', value: 'otro' },
 ]
 
+const CategoryLabel: Record<CategoryExpense, string> = CategoryExpenses.reduce(
+  (acc, item) => ({ ...acc, [item.value]: item.label }),
+  {} as Record<CategoryExpense, string>,
+)
+
 export const Expenses = (): JSX.Element => {
   const dispatch = useAppDispatch()
+  const expenses = useAppSelector((state) => state.expenses)
   const [description, setDescription] = useState<string>('')
   const [amount, setAmount] = useState<string>('')
   const [category, setCategory] = useState<CategoryExpense | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [fetching, setFetching] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const load = async (): Promise<void> => {
+      setFetching(true)
+      try {
+        await dispatch(fetchExpenses()).unwrap()
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : 'No se pudieron cargar los gastos.',
+        )
+      } finally {
+        setFetching(false)
+      }
+    }
+    load()
+  }, [dispatch])
 
   const handleSave = async (): Promise<void> => {
     const parsedAmount = parseFloat(amount)
@@ -131,11 +161,44 @@ export const Expenses = (): JSX.Element => {
       <View>
         <Text style={styles.title}>Gastos Recientes</Text>
 
-        <View>
-          <Text>Descripcion:</Text>
-          <Text>Monto: </Text>
-          <Text> Categoria</Text>
-        </View>
+        {fetching ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            data={expenses}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.containerGasto}>
+                <Text
+                  style={[styles.expenseResentLabel, { fontWeight: 'bold' }]}
+                >
+                  Descripcion:{' '}
+                  <Text style={styles.expenseResentLabel}>
+                    {item.description}
+                  </Text>
+                </Text>
+                <Text
+                  style={[styles.expenseResentLabel, { fontWeight: 'bold' }]}
+                >
+                  Monto:{' '}
+                  <Text style={styles.expenseResentLabel}>
+                    L. {item.amount}
+                  </Text>
+                </Text>
+                <Text
+                  style={[styles.expenseResentLabel, { fontWeight: 'bold' }]}
+                >
+                  Categoria:{' '}
+                  <Text style={styles.expenseResentLabel}>
+                    {CategoryLabel[item.category]}
+                  </Text>
+                </Text>
+              </View>
+            )}
+            contentContainerStyle={styles.listContent}
+            style={styles.list}
+          />
+        )}
       </View>
     </View>
   )
@@ -211,5 +274,20 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  containerGasto: {
+    backgroundColor: '#525252',
+    padding: 20,
+    borderRadius: 20,
+    gap: 4,
+  },
+  expenseResentLabel: {
+    color: '#f7f7f7',
+  },
+  list: {
+    maxHeight: 320,
+  },
+  listContent: {
+    gap: 12,
   },
 })
