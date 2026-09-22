@@ -71,59 +71,72 @@ export const Expenses = (): JSX.Element => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Nuevo gasto</Text>
+      <View>
+        <Text style={styles.title}>Nuevo gasto</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Descripcion del gasto"
-        value={description}
-        onChangeText={setDescription}
-        editable={!loading}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Descripcion del gasto"
+          value={description}
+          onChangeText={setDescription}
+          editable={!loading}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Monto (L.)"
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-        editable={!loading}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Monto (L.)"
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
+          editable={!loading}
+        />
 
-      <Text style={styles.label}>Categoria</Text>
-      <View style={styles.chips}>
-        {CategoryExpenses.map((item) => {
-          const selected = category === item.value
-          return (
-            <Pressable
-              key={item.value}
-              style={[styles.chip, selected && styles.chipSelected]}
-              onPress={() => setCategory(item.value)}
-              disabled={loading}
-            >
-              <Text
-                style={[styles.chipText, selected && styles.chipTextSelected]}
+        <Text style={styles.label}>Categoria</Text>
+        <View style={styles.chips}>
+          {CategoryExpenses.map((item) => {
+            const selected = category === item.value
+            return (
+              <Pressable
+                key={item.value}
+                style={[styles.chip, selected && styles.chipSelected]}
+                onPress={() => setCategory(item.value)}
+                disabled={loading}
               >
-                {item.label}
-              </Text>
-            </Pressable>
-          )
-        })}
+                <Text
+                  style={[styles.chipText, selected && styles.chipTextSelected]}
+                >
+                  {item.label}
+                </Text>
+              </Pressable>
+            )
+          })}
+        </View>
+
+        {error !== null && <Text style={styles.error}>{error}</Text>}
+
+        <Pressable
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleSave}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Guardar</Text>
+          )}
+        </Pressable>
       </View>
 
-      {error !== null && <Text style={styles.error}>{error}</Text>}
+      {/* GASTOs */}
+      <View>
+        <Text style={styles.title}>Gastos Recientes</Text>
 
-      <Pressable
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={handleSave}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Guardar</Text>
-        )}
-      </Pressable>
+        <View>
+          <Text>Descripcion:</Text>
+          <Text>Monto: </Text>
+          <Text> Categoria</Text>
+        </View>
+      </View>
     </View>
   )
 }
@@ -133,6 +146,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 420,
     padding: 24,
+    gap: 100,
   },
   title: {
     fontSize: 20,
