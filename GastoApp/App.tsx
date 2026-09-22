@@ -1,6 +1,6 @@
+import 'react-native-url-polyfill/auto';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import 'react-native-url-polyfill/auto';
 
 export default function App() {
   return (
