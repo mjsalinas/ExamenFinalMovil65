@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { supabase } from '../../lib/supabase'
 
-type Category =
+export type CategoryExpense =
   | 'alimentacion'
   | 'transporte'
   | 'entretenimiento'
@@ -13,7 +13,7 @@ export interface Expense {
   id: string
   description: string
   amount: number
-  category: Category
+  category: CategoryExpense
 }
 
 export type NewExpense = Omit<Expense, 'id'>
