@@ -1,14 +1,7 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { supabase } from '../../lib/supabase';
 
-export type Expense = {
-  id: string;
-  description: string;
-  amount: number;
-  category: string;
-};
-
-const CATEGORIES = [
+export const EXPENSE_CATEGORIES = [
   'Alimentacion',
   'Transporte',
   'Entretenimiento',
@@ -17,53 +10,57 @@ const CATEGORIES = [
   'Otro',
 ] as const;
 
-export type ExpenseCategory = (typeof CATEGORIES)[number];
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+
+export type Expense = {
+  id: string;
+  description: string;
+  amount: number;
+  category: ExpenseCategory;
+};
 
 const initialState: Expense[] = [];
 
-export const fetchExpenses = createAsyncThunk<Expense[], void, { rejectValue: string }>(
+export const fetchExpenses = createAsyncThunk<Expense[]>(
   'expenses/fetchExpenses',
-  async (_, thunkApi) => {
-    const { data, error } = await supabase.from('expenses').select('*').order('id', { ascending: false });
+  async () => {
+    const { data, error } = await supabase
+      .from('expenses')
+      .select('*')
+      .order('id', { ascending: false });
 
     if (error) {
-      return thunkApi.rejectWithValue(error.message);
+      throw new Error(error.message);
     }
 
-    return (data ?? []) as Expense[];
+    return data as Expense[];
   }
 );
 
-export const addExpense = createAsyncThunk<Expense, Omit<Expense, 'id'>, { rejectValue: string }>(
+export const addExpense = createAsyncThunk<Expense, Omit<Expense, 'id'>>(
   'expenses/addExpense',
-  async (expense, thunkApi) => {
+  async (newExpense) => {
     const { data, error } = await supabase
       .from('expenses')
-      .insert([
-        {
-          description: expense.description,
-          amount: Number(expense.amount),
-          category: expense.category,
-        },
-      ])
+      .insert([newExpense])
       .select()
       .single();
 
     if (error) {
-      return thunkApi.rejectWithValue(error.message);
+      throw new Error(error.message);
     }
 
     return data as Expense;
   }
 );
 
-export const deleteExpense = createAsyncThunk<string, string, { rejectValue: string }>(
+export const deleteExpense = createAsyncThunk<string, string>(
   'expenses/deleteExpense',
-  async (id, thunkApi) => {
+  async (id) => {
     const { error } = await supabase.from('expenses').delete().eq('id', id);
 
     if (error) {
-      return thunkApi.rejectWithValue(error.message);
+      throw new Error(error.message);
     }
 
     return id;
@@ -77,10 +74,14 @@ const expensesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchExpenses.fulfilled, (_state, action) => action.payload)
-      .addCase(addExpense.fulfilled, (state, action) => [action.payload, ...state])
-      .addCase(deleteExpense.fulfilled, (state, action) => state.filter((expense) => expense.id !== action.payload));
+      .addCase(addExpense.fulfilled, (state, action) => {
+        state.push(action.payload);
+      })
+      .addCase(deleteExpense.fulfilled, (state, action) => {
+        return state.filter((expense) => expense.id !== action.payload);
+      });
   },
 });
 
-export const selectExpenseCategories = () => CATEGORIES;
 export default expensesSlice.reducer;
+
